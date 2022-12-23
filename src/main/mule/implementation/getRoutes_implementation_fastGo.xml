@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="getRoutes_implementation_fastGoSub_Flow" doc:id="f459d9e2-2f7a-414e-abd6-31608848756f" >
+		<http:request method="GET" doc:name="Request" doc:id="ba14ebc6-2980-4cc2-93e6-0fe52c75433c" config-ref="HTTP_Request_configuration" path="${http.requester.pathRoutes}">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"transactionID" : vars.transactionID
+}]]]></http:headers>
+		</http:request>
+		<ee:transform doc:name="Transform Message" doc:id="ef7facea-22ad-4067-a7a8-b7797c2268f4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map(value, index)->{
+		"departureLocationCode": value.destinationLocationCode,
+		"arrivalLocationCode": value.originLocationCode
+		}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+</mule>
